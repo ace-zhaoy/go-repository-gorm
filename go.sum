@@ -1,0 +1,12 @@
+github.com/ace-zhaoy/errors v1.0.3 h1:yQUIc8KoB0zVwS+SYkfqyKkl/PtLTNx+g0lbo56frP4=
+github.com/ace-zhaoy/errors v1.0.3/go.mod h1:6EeI3Q+n4cQn7GAZUYa2OCN9/w1HCgO8trdVOawnJXE=
+github.com/ace-zhaoy/go-repository v1.0.0 h1:1UYovBjFEMXK4C85VxhHJYLeZMrOOZPmTIebP+NDNOw=
+github.com/ace-zhaoy/go-repository v1.0.0/go.mod h1:ISJc7opK32DkgAsf0xc3A0Ax4o6bPL1uuSXT5SNFgKo=
+github.com/ace-zhaoy/go-utils v1.2.0 h1:Lx/ikxDLXFLxPdK9UZ7/yllfUzU3I5Fmz8sXtUDrbLY=
+github.com/ace-zhaoy/go-utils v1.2.0/go.mod h1:103YWichCbg6aG/lZ7v13icXWeKmXMuAwvtOGaUOtpM=
+github.com/jinzhu/inflection v1.0.0 h1:K317FqzuhWc8YvSVlFMCCUb36O/S9MCKRDI7QkRKD/E=
+github.com/jinzhu/inflection v1.0.0/go.mod h1:h+uFLlag+Qp1Va5pdKtLDYj+kHp5pxUVkryuEj+Srlc=
+github.com/jinzhu/now v1.1.5 h1:/o9tlHleP7gOFmsnYNz3RGnqzefHA47wQpKrrdTIwXQ=
+github.com/jinzhu/now v1.1.5/go.mod h1:d3SSVoowX0Lcu0IBviAWJpolVfI5UJVZZ7cO71lE/z8=
+gorm.io/gorm v1.25.10 h1:dQpO+33KalOA+aFYGlK+EfxcI5MbO7EP2yYygwh9h+s=
+gorm.io/gorm v1.25.10/go.mod h1:hbnx/Oo0ChWMn1BIhpy1oYozzpM15i4YPuHDmfYtwg8=
