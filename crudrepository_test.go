@@ -168,6 +168,7 @@ func initUserTable() (db *gorm.DB, teardown func()) {
 		errors.Check(errors.Wrap(err, "failed to drop table"))
 	}
 }
+
 func TestCrudRepository_Create(t *testing.T) {
 	defer errors.Recover(func(e error) { log.Fatalf("TestCrudRepository_Create err: %+v", e) })
 	db, teardown := initUserTable()
@@ -729,4 +730,46 @@ func TestCrudRepository_DeleteAll(t *testing.T) {
 	cnt, err = userRepository.Count(context.Background())
 	errors.Check(errors.Wrap(err, "failed to count user"))
 	assert.Equal(t, cnt, 0)
+}
+
+type UserSoftDelete struct {
+	ID        int64                 `json:"id"`
+	Name      string                `json:"name"`
+	DeletedAt soft_delete.DeletedAt `json:"deleted_at"`
+}
+
+func (u *UserSoftDelete) GetID() int64 {
+	return u.ID
+}
+
+func (u *UserSoftDelete) SetID(id int64) {
+	u.ID = id
+}
+
+func TestCrudRepository_SoftDelete(t *testing.T) {
+	defer errors.Recover(func(e error) { log.Fatalf("TestCrudRepository_SoftDelete err: %+v", e) })
+	db, teardown := initUserTable()
+	defer teardown()
+	userRepository := NewCrudRepository[int64, *UserSoftDelete](db.Table("user"))
+	user := UserSoftDelete{
+		ID:   idGen.Generate(),
+		Name: "test",
+	}
+	_, err := userRepository.Create(context.Background(), &user)
+	errors.Check(errors.Wrap(err, "failed to create user"))
+
+	user1, err := userRepository.FindByID(context.Background(), user.ID)
+	errors.Check(errors.Wrap(err, "failed to find user"))
+	assert.Equal(t, user1.Name, user.Name)
+	assert.Equal(t, user1.DeletedAt == 0, true)
+
+	err = userRepository.DeleteByID(context.Background(), user.ID)
+	errors.Check(errors.Wrap(err, "failed to soft delete user"))
+
+	_, err = userRepository.FindByID(context.Background(), user.ID)
+	assert.Equal(t, errors.Is(err, repository.ErrNotFound), true)
+
+	user2, err := userRepository.Unscoped().FindByID(context.Background(), user.ID)
+	errors.Check(errors.Wrap(err, "failed to find user"))
+	assert.Equal(t, user2.DeletedAt > 0, true)
 }
