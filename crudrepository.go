@@ -69,6 +69,10 @@ func (c *CrudRepository[ID, ENTITY]) SoftDeleteEnabled() bool {
 func (c *CrudRepository[ID, ENTITY]) Create(ctx context.Context, entity ENTITY) (id ID, err error) {
 	defer errors.Recover(func(e error) { err = e })
 	err = c.query().WithContext(ctx).Create(&entity).Error
+	// gorm.config must be set `TranslateError: true`
+	if err != nil && errors.Is(err, gorm.ErrDuplicatedKey) {
+		err = repository.ErrDuplicatedKey.WrapStack(err)
+	}
 	errors.Check(errors.WithStack(err))
 	id = entity.GetID()
 	return
@@ -77,7 +81,7 @@ func (c *CrudRepository[ID, ENTITY]) Create(ctx context.Context, entity ENTITY) 
 func (c *CrudRepository[ID, ENTITY]) FindByID(ctx context.Context, id ID) (entity ENTITY, err error) {
 	defer errors.Recover(func(e error) { err = errors.Wrap(e, "param: %v", id) })
 	err = c.query().WithContext(ctx).First(&entity, id).Error
-	if errors.Is(err, gorm.ErrRecordNotFound) {
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		err = repository.ErrNotFound.WrapStack(err)
 	}
 	errors.Check(errors.WithStack(err))
@@ -224,7 +228,7 @@ func (c *CrudRepository[ID, ENTITY]) UpdateNonZeroByID(ctx context.Context, id I
 func (c *CrudRepository[ID, ENTITY]) Delete(ctx context.Context, filter map[string]any) (err error) {
 	defer errors.Recover(func(e error) { err = e })
 	var entity ENTITY
-	err = c.query().WithContext(ctx).Where(filter).Delete(entity).Error
+	err = c.query().WithContext(ctx).Where(filter).Delete(&entity).Error
 	errors.Check(errors.WithStack(err))
 	return
 }
@@ -232,7 +236,7 @@ func (c *CrudRepository[ID, ENTITY]) Delete(ctx context.Context, filter map[stri
 func (c *CrudRepository[ID, ENTITY]) DeleteByID(ctx context.Context, id ID) (err error) {
 	defer errors.Recover(func(e error) { err = e })
 	var entity ENTITY
-	err = c.query().WithContext(ctx).Where(map[string]any{c.IDField(): id}).Delete(entity).Error
+	err = c.query().WithContext(ctx).Where(map[string]any{c.IDField(): id}).Delete(&entity).Error
 	errors.Check(errors.WithStack(err))
 	return
 }
@@ -243,7 +247,7 @@ func (c *CrudRepository[ID, ENTITY]) DeleteByIDs(ctx context.Context, ids []ID) 
 		return
 	}
 	var entity ENTITY
-	err = c.query().WithContext(ctx).Where(c.IDField()+" IN (?)", ids).Delete(entity).Error
+	err = c.query().WithContext(ctx).Where(c.IDField()+" IN (?)", ids).Delete(&entity).Error
 	errors.Check(errors.WithStack(err))
 	return
 }
@@ -251,26 +255,7 @@ func (c *CrudRepository[ID, ENTITY]) DeleteByIDs(ctx context.Context, ids []ID) 
 func (c *CrudRepository[ID, ENTITY]) DeleteAll(ctx context.Context) (err error) {
 	defer errors.Recover(func(e error) { err = e })
 	var entity ENTITY
-	err = c.query().WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(entity).Error
-	errors.Check(errors.WithStack(err))
-	return
-}
-
-func (c *CrudRepository[ID, ENTITY]) DeleteAllByFilter(ctx context.Context, filter map[string]any) (err error) {
-	defer errors.Recover(func(e error) { err = e })
-	var entity ENTITY
-	err = c.query().WithContext(ctx).Where(filter).Delete(entity).Error
-	errors.Check(errors.WithStack(err))
-	return
-}
-
-func (c *CrudRepository[ID, ENTITY]) DeleteAllByIDs(ctx context.Context, ids []ID) (err error) {
-	defer errors.Recover(func(e error) { err = e })
-	if len(ids) == 0 {
-		return
-	}
-	var entity ENTITY
-	err = c.query().WithContext(ctx).Where(c.IDField()+" IN (?)", ids).Delete(entity).Error
+	err = c.query().WithContext(ctx).Session(&gorm.Session{AllowGlobalUpdate: true}).Delete(&entity).Error
 	errors.Check(errors.WithStack(err))
 	return
 }
