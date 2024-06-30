@@ -1,4 +1,4 @@
-package repository_gorm
+package repositorygorm
 
 import (
 	"gorm.io/gorm/schema"

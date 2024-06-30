@@ -1,4 +1,4 @@
-package repository_gorm
+package repositorygorm
 
 import (
 	"context"
@@ -66,8 +66,15 @@ func (r *RoleRepository) Table() string {
 	return "role"
 }
 
-func (r *RoleRepository) OtherMethod() {
+func (r *RoleRepository) connect() *gorm.DB {
+	if r.IsUnscoped() {
+		return r.db.Unscoped()
+	}
+	return r.db
+}
 
+func (r *RoleRepository) OtherMethod() {
+	// r.connect().xxx
 }
 
 func NewRoleRepository(db *gorm.DB) *RoleRepository {
