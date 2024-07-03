@@ -187,11 +187,11 @@ func (c *CrudRepository[ID, ENTITY]) ExistsByID(ctx context.Context, id ID) (exi
 
 func (c *CrudRepository[ID, ENTITY]) ExistsByIDs(ctx context.Context, ids []ID) (exists contract.Dict[ID, bool], err error) {
 	defer errors.Recover(func(e error) { err = e })
-	var entities []ENTITY
 	if len(ids) == 0 {
 		exists = repository.NewDict[ID, bool](nil)
 		return
 	}
+	var entities []ENTITY
 	err = c.connect().WithContext(ctx).Select(c.IDField()).Find(&entities, ids).Error
 	errors.Check(errors.WithStack(err))
 	exists = repository.NewDictWithSize[ID, bool](len(entities))
