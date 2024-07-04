@@ -1,5 +1,5 @@
 # 介绍
-这是一个使用`gorm`作为驱动的 repository 库，支持 [github.com/ace-zhaoy/go-repository](https://github.com/ace-zhaoy/go-repository) 协议。
+这是一个使用`gorm.io/gorm`作为驱动的 repository 库，支持 [github.com/ace-zhaoy/go-repository](https://github.com/ace-zhaoy/go-repository) 协议。
 
 # 使用
 ```shell
