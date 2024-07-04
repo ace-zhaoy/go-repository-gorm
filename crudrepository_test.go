@@ -653,7 +653,7 @@ func TestCrudRepository_Delete(t *testing.T) {
 	})
 	errors.Check(errors.Wrap(err, "failed to delete user"))
 	_, err = userRepository.FindByID(context.Background(), user.ID)
-	assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
+	assert.Equal(t, errors.Is(err, repository.ErrNotFound), true)
 }
 
 func TestCrudRepository_DeleteByID(t *testing.T) {
@@ -671,7 +671,7 @@ func TestCrudRepository_DeleteByID(t *testing.T) {
 	err = userRepository.DeleteByID(context.Background(), user.ID)
 	errors.Check(errors.Wrap(err, "failed to delete user"))
 	_, err = userRepository.FindByID(context.Background(), user.ID)
-	assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
+	assert.Equal(t, errors.Is(err, repository.ErrNotFound), true)
 }
 
 func TestCrudRepository_DeleteByIDs(t *testing.T) {
@@ -696,9 +696,9 @@ func TestCrudRepository_DeleteByIDs(t *testing.T) {
 	err = userRepository.DeleteByIDs(context.Background(), []int64{user.ID, user1.ID})
 	errors.Check(errors.Wrap(err, "failed to delete user"))
 	_, err = userRepository.FindByID(context.Background(), user.ID)
-	assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
+	assert.Equal(t, errors.Is(err, repository.ErrNotFound), true)
 	_, err = userRepository.FindByID(context.Background(), user1.ID)
-	assert.Equal(t, errors.Is(err, gorm.ErrRecordNotFound), true)
+	assert.Equal(t, errors.Is(err, repository.ErrNotFound), true)
 }
 
 func TestCrudRepository_DeleteAll(t *testing.T) {
