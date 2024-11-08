@@ -9,8 +9,6 @@ github.com/ace-zhaoy/errors v1.0.3 h1:yQUIc8KoB0zVwS+SYkfqyKkl/PtLTNx+g0lbo56frP
 github.com/ace-zhaoy/errors v1.0.3/go.mod h1:6EeI3Q+n4cQn7GAZUYa2OCN9/w1HCgO8trdVOawnJXE=
 github.com/ace-zhaoy/go-id v1.0.5 h1:uQCEGQGGvxCF1s4BPnitVlY74aUIHBDLMcEV7YDBmfY=
 github.com/ace-zhaoy/go-id v1.0.5/go.mod h1:iWhWYN0x90dQkVGYGR6/VoshAyBUUUGDUnU6kQQuhm4=
-github.com/ace-zhaoy/go-repository v1.0.2 h1:jJeZpsb186MBMy0ixMYQRysqMkCt9Mlk0bLJgXtY2ho=
-github.com/ace-zhaoy/go-repository v1.0.2/go.mod h1:ISJc7opK32DkgAsf0xc3A0Ax4o6bPL1uuSXT5SNFgKo=
 github.com/ace-zhaoy/go-repository v1.0.3 h1:ngtnTmBke61saGe+U+wTjak5DrIYWU8AsSFkcqRrqJ8=
 github.com/ace-zhaoy/go-repository v1.0.3/go.mod h1:ISJc7opK32DkgAsf0xc3A0Ax4o6bPL1uuSXT5SNFgKo=
 github.com/ace-zhaoy/go-utils v1.2.2 h1:H5wAmPPWq1bDnA/1TeZQ+nW4ICCCkURkInLCKodKgKY=

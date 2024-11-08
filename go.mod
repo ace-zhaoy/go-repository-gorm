@@ -1,4 +1,4 @@
-module github.com/ace-zhaoy/go-repostory-gorm
+module github.com/ace-zhaoy/go-repository-gorm
 
 go 1.18
 
