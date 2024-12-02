@@ -82,6 +82,18 @@ func (c *CrudRepository[ID, ENTITY]) Create(ctx context.Context, entity ENTITY) 
 	return
 }
 
+func (c *CrudRepository[ID, ENTITY]) FindOne(ctx context.Context, filter map[string]any, orders ...contract.Order) (entity ENTITY, err error) {
+	defer errors.Recover(func(e error) { err = e })
+	orderStr := strings.Join(uslice.Map(orders, func(order contract.Order) string { return order.ToString() }), ",")
+
+	err = c.connect().WithContext(ctx).Where(filter).Order(orderStr).First(&entity).Error
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		err = repository.ErrNotFound.WrapStack(err)
+	}
+	errors.Check(errors.WithStack(err))
+	return
+}
+
 func (c *CrudRepository[ID, ENTITY]) FindByID(ctx context.Context, id ID) (entity ENTITY, err error) {
 	defer errors.Recover(func(e error) { err = errors.Wrap(e, "param: %v", id) })
 	err = c.connect().WithContext(ctx).First(&entity, id).Error
