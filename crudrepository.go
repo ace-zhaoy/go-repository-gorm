@@ -160,7 +160,8 @@ func (c *CrudRepository[ID, ENTITY]) FindAll(ctx context.Context) (collection co
 func (c *CrudRepository[ID, ENTITY]) Count(ctx context.Context) (count int, err error) {
 	defer errors.Recover(func(e error) { err = e })
 	var cnt int64
-	err = c.connect().WithContext(ctx).Count(&cnt).Error
+	var entity ENTITY
+	err = c.connect().Model(&entity).WithContext(ctx).Count(&cnt).Error
 	errors.Check(errors.WithStack(err))
 	count = int(cnt)
 	return
@@ -169,7 +170,8 @@ func (c *CrudRepository[ID, ENTITY]) Count(ctx context.Context) (count int, err 
 func (c *CrudRepository[ID, ENTITY]) CountByFilter(ctx context.Context, filter map[string]any) (count int, err error) {
 	defer errors.Recover(func(e error) { err = e })
 	var cnt int64
-	err = c.connect().WithContext(ctx).Where(filter).Count(&cnt).Error
+	var entity ENTITY
+	err = c.connect().Model(&entity).WithContext(ctx).Where(filter).Count(&cnt).Error
 	errors.Check(errors.WithStack(err))
 	count = int(cnt)
 	return

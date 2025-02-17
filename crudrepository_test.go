@@ -468,6 +468,43 @@ func TestCrudRepository_Count(t *testing.T) {
 	assert.Equal(t, cnt, 2)
 }
 
+func TestCrudRepository_Count_softDelete(t *testing.T) {
+	defer errors.Recover(func(e error) { log.Fatalf("TestCrudRepository_Count err: %+v", e) })
+	db, teardown := initUserTable()
+	defer teardown()
+	userRepository := NewCrudRepository[int64, *UserSoftDelete](db.Table("user"))
+
+	cnt, err := userRepository.Count(context.Background())
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 0)
+
+	user := UserSoftDelete{
+		ID:   idGen.Generate(),
+		Name: "test",
+	}
+	_, err = userRepository.Create(context.Background(), &user)
+	errors.Check(errors.Wrap(err, "failed to create user"))
+	user2 := UserSoftDelete{
+		ID:   idGen.Generate(),
+		Name: "test2",
+	}
+	_, err = userRepository.Create(context.Background(), &user2)
+	errors.Check(errors.Wrap(err, "failed to create user"))
+	cnt, err = userRepository.Count(context.Background())
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 2)
+
+	err = userRepository.DeleteByID(context.Background(), user.ID)
+	errors.Check(errors.Wrap(err, "failed to delete user"))
+	cnt, err = userRepository.Count(context.Background())
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 1)
+
+	cnt, err = userRepository.Unscoped().Count(context.Background())
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 2)
+}
+
 func TestCrudRepository_CountByFilter(t *testing.T) {
 	defer errors.Recover(func(e error) { log.Fatalf("TestCrudRepository_CountByFilter err: %+v", e) })
 	db, teardown := initUserTable()
@@ -497,6 +534,49 @@ func TestCrudRepository_CountByFilter(t *testing.T) {
 	})
 	errors.Check(errors.Wrap(err, "failed to count user"))
 	assert.Equal(t, cnt, 1)
+}
+
+func TestCrudRepository_CountByFilter_softDelete(t *testing.T) {
+	defer errors.Recover(func(e error) { log.Fatalf("TestCrudRepository_CountByFilter_softDelete err: %+v", e) })
+	db, teardown := initUserTable()
+	defer teardown()
+	userRepository := NewCrudRepository[int64, *UserSoftDelete](db.Table("user"))
+
+	cnt, err := userRepository.CountByFilter(context.Background(), map[string]any{
+		"name": "test",
+	})
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 0)
+
+	user := UserSoftDelete{
+		ID:   idGen.Generate(),
+		Name: "test",
+	}
+	_, err = userRepository.Create(context.Background(), &user)
+	errors.Check(errors.Wrap(err, "failed to create user"))
+	user2 := UserSoftDelete{
+		ID:   idGen.Generate(),
+		Name: "test2",
+	}
+	_, err = userRepository.Create(context.Background(), &user2)
+	errors.Check(errors.Wrap(err, "failed to create user"))
+	cnt, err = userRepository.CountByFilter(context.Background(), map[string]any{
+		"name": "test",
+	})
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 1)
+
+	err = userRepository.DeleteByID(context.Background(), user.ID)
+	errors.Check(errors.Wrap(err, "failed to delete user"))
+	cnt, err = userRepository.CountByFilter(context.Background(), map[string]any{
+		"name": "test",
+	})
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 0)
+
+	cnt, err = userRepository.Unscoped().Count(context.Background())
+	errors.Check(errors.Wrap(err, "failed to count user"))
+	assert.Equal(t, cnt, 2)
 }
 
 func TestCrudRepository_Exists(t *testing.T) {
