@@ -137,6 +137,17 @@ func (c *CrudRepository[ID, ENTITY]) FindByFilter(ctx context.Context, filter ma
 	return
 }
 
+func (c *CrudRepository[ID, ENTITY]) FindByFilterWithSort(ctx context.Context, filter map[string]any, orders ...contract.Order) (collection contract.Collection[ID, ENTITY], err error) {
+	defer errors.Recover(func(e error) { err = e })
+	orderStr := strings.Join(uslice.Map(orders, func(order contract.Order) string { return order.ToString() }), ",")
+
+	var entities []ENTITY
+	err = c.connect().WithContext(ctx).Where(filter).Order(orderStr).Find(&entities).Error
+	errors.Check(errors.WithStack(err))
+	collection = repository.NewCollection[ID, ENTITY](entities)
+	return
+}
+
 func (c *CrudRepository[ID, ENTITY]) FindByFilterWithPage(ctx context.Context, filter map[string]any, limit, offset int, orders ...contract.Order) (collection contract.Collection[ID, ENTITY], err error) {
 	defer errors.Recover(func(e error) { err = e })
 	orderStr := strings.Join(uslice.Map(orders, func(order contract.Order) string { return order.ToString() }), ",")
